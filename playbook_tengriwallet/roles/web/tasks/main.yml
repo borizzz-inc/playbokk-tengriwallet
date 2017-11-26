@@ -31,7 +31,7 @@
 
 - name: apt | add docker-ce repo
   apt_repository:
-    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenal stable
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
   tags: docker-ce
 
 - name: install docker-ce
@@ -67,15 +67,15 @@
     path: '{{docker_tmp}}'
     state: 'directory'
 
-- name: 'DOCKER PATH {{docker_bin/restoredb}}'
-  file:
-    path: '{{docker_bin/restoredb}}'
-    state: 'directory'
+#- name: 'DOCKER PATH {{docker_bin/restoredb}}'
+#  file:
+#    path: '{{docker_bin/restoredb}}'
+#    state: 'directory'
 
-- name: 'DOCKER PATH {{docker_bin/dumpdb}}'
-  file:
-    path: '{{docker_bin/dumpdb}}'
-    state: 'directory'
+#- name: 'DOCKER PATH {{docker_bin/dumpdb}}'
+#  file:
+#    path: '{{docker_bin/dumpdb}}'
+#    state: 'directory'
 
 - name: 'DOCKER-COMPOSE | copy config'
   template:
@@ -88,8 +88,8 @@
 #    dest: "{{app_path}}/nginx/nginx.conf"
 #  tags: nginxd
 
-- name: docker-compose up -d
-  shell: docker-compose up -d
-  args:
-    chdir: "{{app_path}}/"
-  tags: up
+#- name: docker-compose up -d
+#  shell: docker-compose up -d
+#  args:
+#    chdir: "{{app_path}}/"
+#  tags: up
