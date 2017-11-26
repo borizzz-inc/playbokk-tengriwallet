@@ -1,0 +1,95 @@
+---
+# Обновление кеша и установка необходимых пакетов, всего программного обеспечения,
+# необходимого для работы нашего сервера
+- name: install
+  apt: name={{item}} state=present update_cache=yes
+  with_items:
+    - 'openssl'
+    - 'libssl-dev'
+    - 'libyaml-dev'
+    - 'libcurl4-openssl-dev'
+    - 'git'
+    - 'libpq-dev'
+    - 'libxml2-dev'
+    - 'libxslt1-dev'
+    - 'build-essential'
+    - 'htop'
+    - 'vim'
+    - 'tmux'
+    - 'python3'
+    - 'python3-pip'
+    - 'apt-transport-https'
+
+- name: install docker-compose
+  pip:
+    name: docker-compose
+
+- name: apt | add docker-ce repo key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+  tags: docker-ce
+
+- name: apt | add docker-ce repo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenal stable
+  tags: docker-ce
+
+- name: install docker-ce
+  apt:
+    name: docker-ce
+    state: latest
+    update_cache: yes
+  tags: docker-ce
+
+#- name: 'clone from git repo'
+#  become: true
+#  become_user: 'www-data'
+#  git:
+#    repo: ''
+#    dest: '/var/www/html'
+#    version: '{{git_version}}'
+#    accept_hostkey: yes
+#    force: yes
+#    ssh_opts: '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
+#  environment:
+#    SSH_AUTH_SOCK: "{{ansible_env.SSH_AUTH_SOCK}}"
+#  tags:
+#    - mygit
+
+
+- name: 'DOCKER PATH {{docker_logs}}'
+  file:
+    path: '{{docker_logs}}'
+    state: 'directory'
+
+- name: 'DOCKER PATH {{docker_tmp}}'
+  file:
+    path: '{{docker_tmp}}'
+    state: 'directory'
+
+- name: 'DOCKER PATH {{docker_bin/restoredb}}'
+  file:
+    path: '{{docker_bin/restoredb}}'
+    state: 'directory'
+
+- name: 'DOCKER PATH {{docker_bin/dumpdb}}'
+  file:
+    path: '{{docker_bin/dumpdb}}'
+    state: 'directory'
+
+- name: 'DOCKER-COMPOSE | copy config'
+  template:
+    src: 'docker-compose.yml'
+    dest: '{{app_path}}'
+
+#- name: 'NGINX | copy config'
+#  template:
+#    src: nginx_conf
+#    dest: "{{app_path}}/nginx/nginx.conf"
+#  tags: nginxd
+
+- name: docker-compose up -d
+  shell: docker-compose up -d
+  args:
+    chdir: "{{app_path}}/"
+  tags: up

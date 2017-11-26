@@ -1,0 +1,54 @@
+---
+- name: Проверяем, установлен ли fail2ban
+  stat:
+  become: true
+  become_user: '{{app_user}}'
+  args:
+    path: /etc/fail2ban/jail.conf
+  register: fail2ban_check
+
+# Install fail2ban
+
+#- name: Download fail2ban
+#  get_url:
+#    url: "{{fail2ban_url}}"
+#    dest: "/tmp/fail2ban-{{fail2ban_version}}.tar.gz"
+#  when: fail2ban_check.stat.exists == False 
+#
+#- name: Extract tar.gz
+#  unarchive:
+#    src: "/tmp/fail2ban-{{fail2ban_version}}.tar.gz"
+#    dest: "/tmp/"
+#    copy: no
+#  register: extract_fail2ban
+#  when: fail2ban_check.stat.exists == False 
+#
+#
+#- name: Build fail2ban
+#  command: >
+#    python setup.py install
+#    chdir=/tmp/fail2ban-{{fail2ban_version}}
+#  when: extract_fail2ban.changed
+
+- name: 'apt | install fail2ban'
+  action: 'apt pkg=fail2ban'
+
+- name: Copy jail.conf
+  template: src=jail.conf dest=/etc/fail2ban/jail.conf
+  register: fail2ban_unit
+
+# Services
+
+- name: 'fail2ban | enable service'
+  systemd: name=fail2ban daemon_reload=yes enabled=yes
+  when: fail2ban_unit.changed
+
+- name: 'fail2ban | start service'
+  systemd: name=fail2ban state=started enabled=yes
+  register: fail2ban_started
+
+- name: 'fail2ban | reload service'
+  systemd: name=fail2ban state=reloaded
+  when: not fail2ban_started.changed
+
+

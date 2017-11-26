@@ -1,0 +1,10 @@
+[tengri:children]
+staging-tengri
+
+[staging-tengri]
+tengri-staging ansible_host=52.166.222.90 ansible_ssh_user=root app_user=root
+
+[tengri:vars]
+server_env=production
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+

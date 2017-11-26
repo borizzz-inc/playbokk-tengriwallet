@@ -1,0 +1,10 @@
+---
+postgres_version: 9.6
+postgres_host: localhost
+#postgres_db_name: staging-bumaga
+#postgres_db_user: ubuntu
+#db_password: vagrant
+
+#POSTGRES
+db_name: tengri_wallet
+db_user: tengri

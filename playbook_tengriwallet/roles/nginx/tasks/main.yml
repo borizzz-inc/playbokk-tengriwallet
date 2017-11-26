@@ -1,0 +1,55 @@
+# Установка и настройка веб сервера nginx
+- name: 'nginx | install'
+
+  apt: name='{{item}}' state=latest   update_cache=yes
+  with_items:
+    - nginx
+    - nginx-extras
+
+#- name: Проверяем, dhparam.pem
+#  stat:
+#  become: true
+#  become_user: '{{app_user}}'
+#  args:
+#    path: /etc/nginx/dhparam.pem
+#  register: dhparam_check
+
+#- name: 'nginx | create dhparam'
+#  command: 'openssl dhparam -out /etc/nginx/dhparam.pem 2048'
+#  register: nginx_config_copied
+#  when: dhparam_check.stat.exists == False
+
+#- name: 'nginx | check config'
+#  command: 'test -f /etc/nginx/sites-enabled/nginx.conf'
+#  register: nginx_config_copied
+#  ignore_errors: yes
+
+#- name: 'nginx | createdir'
+#  shell: 'rm /etc/nginx/sites-enabled/default; mkdir -p etc/nginx/sites-enabled/'
+#  when: nginx_config_copied|failed
+
+#- name: 'nginx | copy config'
+#  template:
+#    src: nginx.conf
+#    dest: /etc/nginx/sites-enabled/tengri
+#    owner: root
+#    group: root
+#    mode: 0644
+    #validate: nginx -t
+
+#- name: сreate directory
+#  file: path={{certs_path}} state=directory
+
+#- name: 'certs | copy'
+#  copy:
+#    src: '{{item}}'
+#    dest: '{{certs_path}}/{{item}}'
+#    owner: '{{app_user}}'
+#    group: root
+#    mode: 0440
+#  with_items:
+#    - 'star.{{app_domain}}.crt'
+#    - 'star.{{app_domain}}.key'
+
+- name: 'nginx | restart service'
+  service: name=nginx state=restarted    

@@ -1,0 +1,55 @@
+#nginx:
+#    image: nginx:latest
+#    ports:
+#        - '80:80'
+#    volumes:
+#        - ./nginx:/etc/nginx/conf.d
+#        - ./logs/nginx:/var/log/nginx
+#        - /var/www/html:/var/www/html
+#    links:
+#        - tmp
+#    restart: always
+
+  postgres:
+    image: postgres:9.6.1
+    ports:
+      - 5432:5432
+    volumes:
+      # Mount the DB dumps folder into the container, to be able to create & access database dumps:
+      - ./db-data:/db/dumps
+      # Mount out tmp folder, we might want to have access to something there during development:
+      - ./tmp:/tmp
+      # Mount our 'restoredb' script:
+      - ./bin/restoredb:/bin/restoredb:ro
+      # Mount our 'dumpdb' script:
+      - ./bin/dumpdb:/bin/dumpdb:ro
+      # We'll mount the 'postgres-data' volume into the location Postgres stores it's data:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+POSTGRES_PASSWORD: qwerty
+
+
+#mysql:
+#    image: mariadb
+#    ports:
+#        - '3306:3306'
+#    volumes:
+#        - ./db-data:/var/lib/mysql
+#    environment:
+#        - MYSQL_ROOT_PASSWORD=aqwe123
+#    restart: always
+
+#tmp:
+#    image: php:fpm
+#    ports:
+#        - '9000:9000'
+#    volumes:
+#        - /var/www/html:/var/www/html
+#    environment:
+#        - tmp_DB_NAME=wpdb
+#        - tmp_TABLE_PREFIX=wp_
+#        - tmp_DB_HOST=mysql
+#        - tmp_DB_PASSWORD=aqwe123
+#    links:
+#        - mysql
+#    restart: always

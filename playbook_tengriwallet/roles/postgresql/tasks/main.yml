@@ -1,0 +1,62 @@
+---
+
+- name: add postgresql {{postgres_version}} repository
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+
+- name: add postgresql {{postgres_version}} repo key
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+
+- name: install postgres
+  apt: name={{item}} state=present update_cache=yes
+  with_items:
+    - postgresql-{{postgres_version}}
+    - python3-psycopg2
+    - postgresql-contrib-{{postgres_version}}
+    - libpq-dev
+    - python-psycopg2
+
+- name: install en_US locale
+  shell: locale-gen en_US en_US.UTF-8 
+  become: yes
+
+- name: install ru_RU locale
+  shell: locale-gen ru_RU ru_RU.UTF-8 
+  become: yes
+
+- name: change pg_hba.conf
+  template:
+    src: pg_hba.conf
+    dest: /etc/postgresql/{{postgres_version}}/main/pg_hba.conf
+  register: pg_hba
+
+- name: 'postgresql | restart service'
+  service: name=postgresql state=reloaded
+  when: pg_hba.changed
+
+- name: Проверяем доступность сервиса
+  service: name=postgresql state=started enabled=yes
+
+- name: create db user
+  postgresql_user:
+    name: '{{db_user}}'
+    password: qwerty
+  become: yes
+  become_user: postgres
+
+- name: create db
+  postgresql_db:
+    name: '{{db_name}}'
+    owner: '{{db_user}}'
+  become: yes
+  become_user: postgres
+
+#- name: Adds extension to the database
+#  postgresql_ext:
+#    name: pgcrypto
+#    db: '{{db_name}}'
+#    login_user: postgres
+#    login_host: 127.0.0.1
+#    port: 5432
+#  tags: addext

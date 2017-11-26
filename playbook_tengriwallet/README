@@ -1,0 +1,9 @@
+[ tengri ]
+
+[ Деплой проекта на production ]
+ansible-playbook -i production.inventory -D main.yml
+
+[ Тестовый деплой на вагранте ]
+ansible-playbook -i vagrant.inventory -D main.yml -D
+
+

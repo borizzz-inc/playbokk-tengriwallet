@@ -1,0 +1,20 @@
+# Интерпретатор Python
+ansible_python_interpreter: /usr/bin/python3
+
+# Версия ruby
+ruby_version: 2.4.1
+
+# Пользователь, от лица которого будет происходит деплой
+# app_user: www-data
+
+# Домашняя директория
+home: /home/{{app_user}}
+
+# Путь до нашего приложения
+app_path: /{{org}}/{{ app_name }}
+
+# Rails
+#rails_secret_key_base: ''
+puma_workers: 4
+puma_threads: 4,16
+

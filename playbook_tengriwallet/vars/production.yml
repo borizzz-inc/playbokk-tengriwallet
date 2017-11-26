@@ -1,0 +1,29 @@
+# Название приложения
+app_name: tengri
+
+# Юзер приложения
+app_user: vagrant
+# Организация
+
+org: project
+
+# Домены приложения
+domain: test-2710175714.cloudapp.net
+
+git_version: master
+
+
+# Домменная зона
+app_domain: cloudapp.net
+
+
+
+
+
+#DOCKER#
+
+docker_db/dumps:             "{{app_path}}/db/dumps"
+docker_tmp:                  "{{app_path}}/tmp"
+docker_bin/restoredb:        "{{app_path}}/bin/restoredb"
+docker_logs:                 "{{app_path}}/logs"
+docker_bin/dumpdb:           "{{app_path}}/bin/dumpdb"

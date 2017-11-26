@@ -1,0 +1,11 @@
+{{app_path}}/log/*.log {
+      daily
+      missingok
+      rotate 30
+	  dateext
+	  copytruncate
+      compress
+      notifempty
+	  create 0640 {{app_user}} {{app_user}}
+
+}

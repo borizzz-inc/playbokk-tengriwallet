@@ -1,0 +1,73 @@
+---
+- hosts: www
+  become: yes
+
+  vars_files:
+    - vars/default.yml
+    - vars/{{server_env}}.yml
+
+  pre_tasks:
+  - debug:
+      msg: '{{ansible_default_ipv4.address}}'
+
+  - name: add root-user to {{app_user}} group
+    user: name=root groups={{app_user}}
+
+#  - name: ssh-agent hack | grant access to {{app_user}}
+#    acl: name={{ item }} etype=user entity={{app_user}} permissions="rwx" state=present
+#    with_items:
+#      - "{{ ansible_env.SSH_AUTH_SOCK|dirname }}"
+#      - "{{ ansible_env.SSH_AUTH_SOCK }}"
+#    changed_when: false
+
+  - name: 'Создаем директорию для приложения'
+    file:
+      path: '{{app_path}}'
+      state:  'directory'
+      owner: '{{app_user}}'
+      group: '{{app_user}}'
+      mode: '1775'
+
+#  - name: 'acl | grant user {{app_user}} read/write access to {{app_path}}'
+#    acl: path={{app_path}} entity={{app_user}} etype=user permissions=rwX state=present
+
+  roles:
+
+  - { role: web, tags: ['web']}
+  - { role: nginx, tags: ['nginx']}
+ # - { role: logrotate, tags: ['logrotate']}
+
+
+
+  post_tasks:
+  - name: 'итоговые релизы после деплоя'
+    shell: '/usr/bin/git log | head -n 1'
+    args:
+      chdir: '{{app_path}}'
+    register: release
+    tags: post_tasks
+
+  - debug:
+      var: release.stdout_lines
+    tags: post_tasks
+
+
+- hosts: backend
+
+  become: yes
+
+  vars_files:
+    - vars/default.yml
+    - vars/{{server_env}}.yml
+
+  pre_tasks:
+  - debug:
+      msg: '{{ansible_default_ipv4.address}}'
+
+  - name: add root-user to {{app_user}} group
+    user: name=root groups={{app_user}}
+
+
+  roles:
+
+  - { role: postgresql, tags: ['postgresql']}
