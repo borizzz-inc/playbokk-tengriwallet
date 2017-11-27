@@ -57,15 +57,15 @@
 #    - mygit
 
 
-- name: 'DOCKER PATH {{docker_logs}}'
-  file:
-    path: '{{docker_logs}}'
-    state: 'directory'
+#- name: 'DOCKER PATH {{docker_logs}}'
+#  file:
+#    path: '{{docker_logs}}'
+#    state: 'directory'
 
-- name: 'DOCKER PATH {{docker_tmp}}'
-  file:
-    path: '{{docker_tmp}}'
-    state: 'directory'
+#- name: 'DOCKER PATH {{docker_tmp}}'
+#  file:
+#    path: '{{docker_tmp}}'
+#    state: 'directory'
 
 #- name: 'DOCKER PATH {{docker_bin/restoredb}}'
 #  file:
@@ -79,17 +79,50 @@
 
 - name: 'DOCKER-COMPOSE | copy config'
   template:
-    src: 'docker-compose.yml'
+    src: '{{item}}'
     dest: '{{app_path}}'
+  with_items:
+    - Dockerfile
+    - Gemfile
+    - Gemfile.lock
+    - docker-compose.yml
+  tags: dcc
 
-#- name: 'NGINX | copy config'
-#  template:
-#    src: nginx_conf
-#    dest: "{{app_path}}/nginx/nginx.conf"
-#  tags: nginxd
 
-#- name: docker-compose up -d
-#  shell: docker-compose up -d
-#  args:
-#    chdir: "{{app_path}}/"
-#  tags: up
+- name: docker-compose run web rails new
+  shell: "docker-compose run web rails new . --force --database=postgresql"
+  args:
+    chdir: "{{app_path}}/"
+  tags: up
+
+- name:
+  file:
+    path: '{{app_path}}'
+    state:  'directory'
+    owner: '{{app_user}}'
+    group: '{{app_user}}'
+    mode: '1775'
+
+- name: docker-compose build
+  shell: docker-compose build
+  args:
+    chdir: "{{app_path}}/"
+  tags: up
+
+- name: 'copy database.yml'
+  template:
+    src: '{{item}}'
+    dest: '{{app_path}}/config'
+  with_items:
+    - database.yml
+
+- name: docker-compose run web rake db:create
+  shell: docker-compose run web rake db:create
+  args:
+    chdir: "{{app_path}}/"
+
+- name: docker-compose up -d
+  shell: docker-compose up -d
+  args:
+    chdir: "{{app_path}}/"
+  tags: up
