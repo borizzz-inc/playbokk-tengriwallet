@@ -1,0 +1,10 @@
+- lineinfile:
+    path: /etc/hosts
+    insertafter: 'ip6-allrouters '
+    line: '{{item}}'
+  with_items:
+    - 10.20.30.40     nameserver
+    - 10.20.30.41     www
+    - 10.20.30.42     backend
+    - 10.20.30.43     hill
+  tags: hline

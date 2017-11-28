@@ -1,4 +1,16 @@
 ---
+### ВСЕ ХОСТЫ ###
+- hosts: tengri
+  become: yes
+
+  vars_files:
+    - vars/default.yml
+    - vars/{{server_env}}.yml
+
+  roles:
+  - { role: lineinfile, tags: ['lineinfile']}
+
+### WWW ###
 - hosts: www
   become: yes
 
@@ -10,8 +22,8 @@
   - debug:
       msg: '{{ansible_default_ipv4.address}}'
 
-  - name: add root-user to {{app_user}} group
-    user: name=root groups={{app_user}}
+  - name: add {{app_user}}-user to {{app_user}} group
+    user: name={{app_user}} groups={{app_user}}
 
 #  - name: ssh-agent hack | grant access to {{app_user}}
 #    acl: name={{ item }} etype=user entity={{app_user}} permissions="rwx" state=present
@@ -28,11 +40,10 @@
       group: '{{app_user}}'
       mode: '1775'
 
-#  - name: 'acl | grant user {{app_user}} read/write access to {{app_path}}'
-#    acl: path={{app_path}} entity={{app_user}} etype=user permissions=rwX state=present
+  - name: 'acl | grant user {{app_user}} read/write access to {{app_path}}'
+    acl: path={{app_path}} entity={{app_user}} etype=user permissions=rwX state=present
 
   roles:
-
   - { role: www, tags: ['www']}
   - { role: nginx, tags: ['nginx']}
  # - { role: logrotate, tags: ['logrotate']}
@@ -51,7 +62,7 @@
       var: release.stdout_lines
     tags: post_tasks
 
-
+### BACKEND ###
 - hosts: backend
 
   become: yes
@@ -70,4 +81,4 @@
 
   roles:
 
-  - { role: postgresql, tags: ['postgresql']}
+  #- { role: postgresql, tags: ['postgresql']}

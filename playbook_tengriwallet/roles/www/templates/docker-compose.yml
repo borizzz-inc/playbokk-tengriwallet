@@ -1,13 +1,18 @@
-version: '3'
-services:
-  db:
-    image: postgres
-  web:
+www:
     build: .
-    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    command: '/bin/bash ./web_app.sh'
     volumes:
-      - .:/myapp
+        - .:/myapp
     ports:
-      - "3000:3000"
-    depends_on:
-      - db
+        - "7001:7001"
+
+postgresql:
+    image: 'bitnami/postgresql:latest'
+    ports:
+        - '5432:5432'
+    environment:
+        - POSTGRESQL_USERNAME=postgres
+        - POSTGRESQL_PASSWORD=qwerty
+        - POSTGRESQL_DATABASE=tengri
+    volumes:
+        - ./pg_main:/etc/postgresql/
