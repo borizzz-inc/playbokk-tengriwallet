@@ -1,0 +1,8 @@
+app:
+    build: .
+    command: '/bin/bash ./web_app.sh'
+    volumes:
+        - .:/myapp
+    ports:
+        - "8001:8001"
+

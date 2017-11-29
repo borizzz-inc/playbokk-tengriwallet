@@ -1,0 +1,3 @@
+sudo vagrant up
+cd playbook_tengriwallet/
+ansible-playbook -i vagrant.inventory -D main.yml

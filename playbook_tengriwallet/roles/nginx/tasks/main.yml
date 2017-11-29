@@ -19,37 +19,37 @@
 #  register: nginx_config_copied
 #  when: dhparam_check.stat.exists == False
 
-#- name: 'nginx | check config'
-#  command: 'test -f /etc/nginx/sites-enabled/nginx.conf'
-#  register: nginx_config_copied
-#  ignore_errors: yes
+- name: 'nginx | check config'
+  command: 'test -f /etc/nginx/sites-enabled/tengri'
+  register: nginx_config_copied
+  ignore_errors: yes
 
-#- name: 'nginx | createdir'
-#  shell: 'rm /etc/nginx/sites-enabled/default; mkdir -p etc/nginx/sites-enabled/'
-#  when: nginx_config_copied|failed
+- name: 'nginx | createdir'
+  shell: 'rm /etc/nginx/sites-enabled/default; mkdir -p etc/nginx/sites-enabled/'
+  when: nginx_config_copied|failed
 
-#- name: 'nginx | copy config'
-#  template:
-#    src: nginx.conf
-#    dest: /etc/nginx/sites-enabled/tengri
-#    owner: root
-#    group: root
-#    mode: 0644
-    #validate: nginx -t
+- name: 'nginx | copy config'
+  template:
+    src: nginx.conf
+    dest: /etc/nginx/sites-enabled/tengri
+    owner: root
+    group: root
+    mode: 0644
 
-#- name: сreate directory
-#  file: path={{certs_path}} state=directory
+- name: сreate directory
+  file: path="{{app_path}}/certs" state=directory
 
-#- name: 'certs | copy'
-#  copy:
-#    src: '{{item}}'
-#    dest: '{{certs_path}}/{{item}}'
-#    owner: '{{app_user}}'
-#    group: root
-#    mode: 0440
-#  with_items:
-#    - 'star.{{app_domain}}.crt'
-#    - 'star.{{app_domain}}.key'
+- name: 'certs | copy'
+  template:
+    src: '{{item}}'
+    dest: "/project/tengri/certs/{{item}}"
+    owner: '{{app_user}}'
+    group: root
+    mode: 0440
+  with_items:
+    - nginx-tengri.crt
+    - nginx-tengri.key
+    - ssl-params.conf
 
 - name: 'nginx | restart service'
-  service: name=nginx state=restarted    
+  service: name=nginx state=restarted

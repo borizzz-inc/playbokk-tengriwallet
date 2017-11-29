@@ -1,4 +1,4 @@
-www:
+api:
     build: .
     command: '/bin/bash ./web_app.sh'
     volumes:
