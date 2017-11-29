@@ -15,4 +15,4 @@ postgresql:
         - POSTGRESQL_PASSWORD=qwerty
         - POSTGRESQL_DATABASE=tengri
     volumes:
-        - ./pg_main:/etc/postgresql/
+        - ./pg_main:/bitnami/postgresql/

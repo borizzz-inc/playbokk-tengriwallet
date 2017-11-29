@@ -6,4 +6,6 @@ ansible-playbook -i production.inventory -D main.yml
 [ Тестовый деплой на вагранте ]
 ansible-playbook -i vagrant.inventory -D main.yml -D
 
+[DEPLOY изменений]
 
+ansible-playbook -i vagrant.inventory -D main.yml -D -t deploy

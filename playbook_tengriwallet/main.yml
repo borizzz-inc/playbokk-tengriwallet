@@ -44,7 +44,7 @@
     acl: path={{app_path}} entity={{app_user}} etype=user permissions=rwX state=present
 
   roles:
-  - { role: www, tags: ['www']}
+  #- { role: www, tags: ['www']}
   - { role: nginx, tags: ['nginx']}
  # - { role: logrotate, tags: ['logrotate']}
 
@@ -81,4 +81,4 @@
 
   roles:
 
-  #- { role: postgresql, tags: ['postgresql']}
+  - { role: backend, tags: ['backend']}

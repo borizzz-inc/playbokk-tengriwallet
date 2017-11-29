@@ -85,7 +85,7 @@
     - Dockerfile
     - docker-compose.yml
     - web_app.sh
-  tags: dcc
+  tags: deploy
 
 #- name: ruby check
 #  stat:
@@ -122,11 +122,15 @@
 #    chdir: "{{app_path}}/"
 #  when: ruby_check.stat.exists == False
 
+- name: docker stop
+  docker_service: project_src={{app_path}}/ state=absent
+  tags: deploy
+
 - name: docker-compose up -d
   shell: docker-compose up -d
   args:
     chdir: "{{app_path}}/"
-  tags: up
+  tags: deploy
 
 - name: owner
   file:
