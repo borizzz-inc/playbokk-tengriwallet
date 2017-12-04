@@ -19,63 +19,29 @@
     - 'python3'
     - 'python3-pip'
     - 'apt-transport-https'
+    - 'postgresql-client'
+    - 'netcat-openbsd'
 
-- name: install docker-compose
+- name: 'install docker-compose'
   pip:
     name: docker-compose
 
-- name: apt | add docker-ce repo key
+- name: 'apt | add docker-ce repo key'
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
   tags: docker-ce
 
-- name: apt | add docker-ce repo
+- name: 'apt | add docker-ce repo'
   apt_repository:
     repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
   tags: docker-ce
 
-- name: install docker-ce
+- name: 'install docker-ce'
   apt:
     name: docker-ce
     state: latest
     update_cache: yes
   tags: docker-ce
-
-#- name: 'clone from git repo'
-#  become: true
-#  become_user: 'www-data'
-#  git:
-#    repo: ''
-#    dest: '/var/www/html'
-#    version: '{{git_version}}'
-#    accept_hostkey: yes
-#    force: yes
-#    ssh_opts: '-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
-#  environment:
-#    SSH_AUTH_SOCK: "{{ansible_env.SSH_AUTH_SOCK}}"
-#  tags:
-#    - mygit
-
-
-#- name: 'DOCKER PATH {{docker_logs}}'
-#  file:
-#    path: '{{docker_logs}}'
-#    state: 'directory'
-
-#- name: 'DOCKER PATH {{docker_tmp}}'
-#  file:
-#    path: '{{docker_tmp}}'
-#    state: 'directory'
-
-#- name: 'DOCKER PATH {{docker_bin/restoredb}}'
-#  file:
-#    path: '{{docker_bin/restoredb}}'
-#    state: 'directory'
-
-#- name: 'DOCKER PATH {{docker_bin/dumpdb}}'
-#  file:
-#    path: '{{docker_bin/dumpdb}}'
-#    state: 'directory'
 
 - name: 'DOCKER-COMPOSE | copy config'
   template:
@@ -87,52 +53,23 @@
     - web_app.sh
   tags: deploy
 
-#- name: ruby check
-#  stat:
-#  become: true
-#  become_user: '{{app_user}}'
-#  args:
-#    path: "{{app_path}}/Rakefile"
-#  register: ruby_check
+- name: 'docker-compose up -d'
+  shell: usermod -aG docker $(whoami)
+  args:
+    chdir: "{{app_path}}/"
+  tags: deploy
 
-#- name: docker-compose run web rails new
-#  shell: "docker-compose run web rails new . --force --database=postgresql"
-#  args:
-#    chdir: "{{app_path}}/"
-#  tags: up
-#  when: ruby_check.stat.exists == False
-
-#- name: docker-compose build
-#  shell: docker-compose build
-#  args:
-#    chdir: "{{app_path}}/"
-#  tags: up
-#  when: ruby_check.stat.exists == False
-
-#- name: 'copy database.yml'
-#  template:
-#    src: '{{item}}'
-#    dest: '{{app_path}}/config'
-#  with_items:
-#    - database.yml
-
-#- name: docker-compose run web rake db:create
-#  shell: docker-compose run web rake db:create
-#  args:
-#    chdir: "{{app_path}}/"
-#  when: ruby_check.stat.exists == False
-
-- name: docker stop
+- name: 'docker stop'
   docker_service: project_src={{app_path}}/ state=absent
   tags: deploy
 
-- name: docker-compose up -d
+- name: 'docker-compose up -d'
   shell: docker-compose up -d
   args:
     chdir: "{{app_path}}/"
   tags: deploy
 
-- name: owner
+- name: 'owner'
   file:
     path: '{{app_path}}/'
     owner: 'vagrant'

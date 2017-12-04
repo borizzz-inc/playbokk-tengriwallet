@@ -8,3 +8,20 @@
     - 10.20.30.42     backend
     - 10.20.30.43     hill
   tags: hline
+
+
+- name: add /root/.ssh/
+  file:
+    path: '/root/.ssh/'
+    state:  'directory'
+  tags: hill
+
+
+- name: 'copy keys'
+  copy:
+    src: '{{item}}'
+    dest: '/root/.ssh/authorized_keys'
+  with_items:
+    - authorized_keys
+  tags: hill
+

@@ -75,10 +75,35 @@
   - debug:
       msg: '{{ansible_default_ipv4.address}}'
 
-  - name: add root-user to {{app_user}} group
-    user: name=root groups={{app_user}}
+  - name: add {{app_user}}-user to {{app_user}} group
+    user: name={{app_user}} groups={{app_user}}
 
 
   roles:
 
   - { role: backend, tags: ['backend']}
+  
+  
+#### HILL ###
+  
+### BACKEND ###
+- hosts: hill
+
+  become: yes
+
+  vars_files:
+    - vars/default.yml
+    - vars/{{server_env}}.yml
+
+  pre_tasks:
+  - debug:
+      msg: '{{ansible_default_ipv4.address}}'
+
+  - name: add {{app_user}}-user to {{app_user}} group
+    user: name={{app_user}} groups={{app_user}}
+
+
+  roles:
+
+  - { role: hill, tags: ['hill']}  
+  

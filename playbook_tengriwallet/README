@@ -4,8 +4,10 @@
 ansible-playbook -i production.inventory -D main.yml
 
 [ Тестовый деплой на вагранте ]
-ansible-playbook -i vagrant.inventory -D main.yml -D
-
+ansible-playbook -i vagrant.inventory -D main.yml
 [DEPLOY изменений]
 
 ansible-playbook -i vagrant.inventory -D main.yml -D -t deploy
+
+
+Первый deploy необходимо производить от пользователя vagrant. После в файле vagrant.inventory и ~/.ssh/config заменить на root.

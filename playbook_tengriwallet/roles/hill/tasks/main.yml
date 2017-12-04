@@ -1,0 +1,18 @@
+---
+
+
+- name: 'copy keys'
+  copy:
+    src: '{{item}}'
+    dest: '/root/.ssh/id_rsa'
+    mode: 0700
+  with_items:
+    - id_rsa
+  tags: hill
+
+
+- name: del vagrant keys
+  file:
+    path: '/home/vagrant/.ssh/'
+    state:  'absent'
+  tags: hill

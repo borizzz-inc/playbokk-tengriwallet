@@ -1,3 +1,17 @@
 sudo vagrant up
 cd playbook_tengriwallet/
 ansible-playbook -i vagrant.inventory -D main.yml
+
+~/ssh/config
+
+ Host 10.20.30.43 hill
+ Hostname %h
+ User root
+ IdentityFile /home/user/devops-tengriwallet/playbook_tengriwallet/roles/hill/files/id_rsa
+
+ Host 10.20.30.41 10.20.30.42 10.20.30.40 www backend nameserver
+ Hostname %h
+ User root
+ ProxyCommand ssh root@10.20.30.43 -W %h:%p
+ IdentityFile /home/user/devops-tengriwallet/playbook_tengriwallet/roles/hill/files/id_rsa #Или ваш закрытый ключ. В этом случае необходимо добавить ваш публичный ключ на удаленном хосте и на бастион в authorized_keys.
+
