@@ -82,11 +82,8 @@
   roles:
 
   - { role: backend, tags: ['backend']}
-  
-  
-#### HILL ###
-  
-### BACKEND ###
+
+
 - hosts: hill
 
   become: yes
