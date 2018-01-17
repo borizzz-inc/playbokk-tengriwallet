@@ -7,8 +7,8 @@
     - vars/default.yml
     - vars/{{server_env}}.yml
 
-  roles:
-  - { role: lineinfile, tags: ['lineinfile']}
+#  roles:
+#  - { role: lineinfile, tags: ['lineinfile']}
 
 ### WWW ###
 - hosts: www
@@ -25,13 +25,6 @@
   - name: add {{app_user}}-user to {{app_user}} group
     user: name={{app_user}} groups={{app_user}}
 
-#  - name: ssh-agent hack | grant access to {{app_user}}
-#    acl: name={{ item }} etype=user entity={{app_user}} permissions="rwx" state=present
-#    with_items:
-#      - "{{ ansible_env.SSH_AUTH_SOCK|dirname }}"
-#      - "{{ ansible_env.SSH_AUTH_SOCK }}"
-#    changed_when: false
-
   - name: 'Создаем директорию для приложения'
     file:
       path: '{{app_path}}'
@@ -46,7 +39,7 @@
   roles:
   - { role: www, tags: ['www']}
   - { role: nginx, tags: ['nginx']}
- # - { role: logrotate, tags: ['logrotate']}
+# - { role: logrotate, tags: ['logrotate']}
 
 
 
@@ -84,23 +77,23 @@
   - { role: backend, tags: ['backend']}
 
 
-- hosts: hill
+#- hosts: hill
+#
+#  become: yes
+#
+#  vars_files:
+#    - vars/default.yml
+#    - vars/{{server_env}}.yml
 
-  become: yes
+#  pre_tasks:
+#  - debug:
+#      msg: '{{ansible_default_ipv4.address}}'
 
-  vars_files:
-    - vars/default.yml
-    - vars/{{server_env}}.yml
-
-  pre_tasks:
-  - debug:
-      msg: '{{ansible_default_ipv4.address}}'
-
-  - name: add {{app_user}}-user to {{app_user}} group
-    user: name={{app_user}} groups={{app_user}}
+#  - name: add {{app_user}}-user to {{app_user}} group
+#    user: name={{app_user}} groups={{app_user}}
 
 
-  roles:
+#  roles:
 
-  - { role: hill, tags: ['hill']}  
+#  - { role: hill, tags: ['hill']}
   

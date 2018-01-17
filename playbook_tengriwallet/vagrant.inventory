@@ -3,10 +3,10 @@
 staging-tengri
 
 [staging-tengri]
-www         ansible_host=10.20.30.40    ansible_ssh_user=vagrant    app_user=vagrant
-hill        ansible_host=10.20.30.41    ansible_ssh_user=vagrant    app_user=vagrant
-backend     ansible_host=10.20.30.42    ansible_ssh_user=vagrant    app_user=vagrant
-nameserver  ansible_host=10.20.30.43    ansible_ssh_user=vagrant    app_user=vagrant
+nameserver         ansible_host=10.20.30.40    ansible_ssh_user=vagrant    app_user=vagrant
+www                ansible_host=10.20.30.41    ansible_ssh_user=vagrant    app_user=vagrant
+backend            ansible_host=10.20.30.42    ansible_ssh_user=vagrant    app_user=vagrant
+hill               ansible_host=10.20.30.43    ansible_ssh_user=vagrant    app_user=vagrant
 
 
 [tengri:vars]
